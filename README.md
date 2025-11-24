@@ -132,3 +132,82 @@ JOIN Pass_in_trip ON Passenger.id=Pass_in_trip.passenger
 JOIN Trip ON Pass_in_trip.trip=Trip.id
 WHERE name LIKE 'Steve Martin' AND town_to LIKE 'London'
 ```
+
+16. Вывести отсортированный по количеству перелетов (по убыванию) и имени (по возрастанию) список пассажиров, совершивших хотя бы 1 полет.
+
+```
+SELECT name, COUNT(Pass_in_trip.id) AS count FROM Passenger
+JOIN Pass_in_trip ON Passenger.id=Pass_in_trip.passenger
+GROUP BY name
+HAVING count > 0
+ORDER BY count DESC, name ASC
+```
+
+17. Определить, сколько потратил в 2005 году каждый из членов семьи. В результирующей выборке не выводите тех членов семьи, которые ничего не потратили.
+
+<details>
+  <summary>ERD</summary>
+  <br>
+
+  <img width="618" height="445" alt="image" src="https://github.com/user-attachments/assets/1ea95782-3251-41bc-8cda-a19b6405f23f" />
+</details>
+
+```
+SELECT member_name, status, SUM(amount*unit_price) AS costs FROM FamilyMembers
+JOIN Payments ON FamilyMembers.member_id=Payments.family_member
+WHERE YEAR(date) = 2005
+GROUP BY member_name, status
+```
+
+> Сортировку группировки по году нельзя сделать через HAVING, потому что HAVING используется для фильтрации групп после их агрегирования (SUM(amount*unit_price) > 100000), а не для фильтрации отдельных строк перед группировкой.
+
+18. Выведите имя самого старшего человека. Если таких несколько, то выведите их всех.
+
+```
+SELECT member_name FROM FamilyMembers
+ORDER BY birthday ASC
+LIMIT 1
+```
+
+```
+SELECT member_name FROM FamilyMembers
+WHERE birthday = (SELECT MIN(birthday) FROM FamilyMembers)
+```
+
+19. Определить, кто из членов семьи покупал картошку (potato).
+
+```
+SELECT DISTINCT status FROM FamilyMembers
+JOIN Payments ON FamilyMembers.member_id=Payments.family_member
+JOIN Goods ON Payments.good=Goods.good_id
+WHERE good_name LIKE 'potato'
+```
+
+20. Сколько и кто из семьи потратил на развлечения (entertainment). Вывести статус в семье, имя, сумму.
+
+```
+SELECT status, member_name, SUM(unit_price*amount) AS costs FROM FamilyMembers
+JOIN Payments ON FamilyMembers.member_id=Payments.family_member
+JOIN Goods ON Payments.good=Goods.good_id
+JOIN GoodTypes ON Goods.type=GoodTypes.good_type_id
+WHERE good_type_name LIKE 'entertainment'
+GROUP BY status, member_name
+```
+
+21. Определить товары, которые покупали более 1 раза.
+
+```
+SELECT good_name FROM Goods
+JOIN Payments ON Goods.good_id=Payments.good
+GROUP BY good_name
+HAVING COUNT(*)>1
+```
+
+22. Найти имена всех матерей (mother).
+
+```
+SELECT member_name FROM FamilyMembers
+WHERE status LIKE 'mother'
+```
+
+23. 

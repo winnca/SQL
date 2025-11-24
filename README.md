@@ -13,4 +13,17 @@
 SELECT name FROM Passenger
 ```
 
-2. 
+2. Вывести названия всеx авиакомпаний.
+
+```
+SELECT name FROM Company
+```
+
+3. Вывести все рейсы, совершенные из Москвы.
+
+```
+SELECT * FROM Trip
+WHERE town_from LIKE 'Moscow'
+```
+
+4. 

@@ -509,4 +509,62 @@ FROM Student
 WHERE name LIKE '10%'
 ```
 
-45.
+45. Какие кабинеты чаще всего использовались для проведения занятий? Выведите те, которые использовались максимальное количество раз.
+
+```
+SELECT classroom
+FROM Schedule
+	JOIN Class ON Schedule.class = Class.id
+	JOIN Timepair ON Schedule.number_pair = Timepair.id
+	JOIN Teacher ON Schedule.teacher = Teacher.id
+	JOIN Subject ON Schedule.subject = Subject.id
+GROUP BY classroom
+ORDER BY COUNT(classroom) DESC
+LIMIT 3
+```
+
+```
+SELECT classroom
+FROM Schedule
+GROUP BY classroom
+HAVING COUNT(*) = (
+		SELECT MAX(count)
+		FROM (
+				SELECT COUNT(*) AS count
+				FROM Schedule
+				GROUP BY classroom
+			) AS counts
+	)
+```
+
+46. В каких классах введет занятия преподаватель "Krauze" ?
+
+```
+SELECT name
+FROM Class
+	JOIN Schedule ON Class.id = Schedule.class
+	JOIN Teacher ON Schedule.teacher = Teacher.id
+WHERE last_name LIKE 'Krauze'
+GROUP BY name
+```
+
+47. Сколько занятий провел Krauze 30 августа 2019 г.?
+
+```
+SELECT COUNT(date) AS COUNT
+FROM Schedule
+	JOIN Teacher ON Schedule.teacher = Teacher.id
+WHERE last_name LIKE 'Krauze'
+	AND date = '2019-08-30'
+```
+
+48. Выведите заполненность классов в порядке убывания.
+
+```
+SELECT name,
+	COUNT(student) AS COUNT
+FROM Class
+	JOIN Student_in_class ON Class.id = Student_in_class.class
+GROUP BY name
+ORDER BY COUNT(student) DESC
+```

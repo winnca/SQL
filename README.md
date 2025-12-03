@@ -568,3 +568,36 @@ FROM Class
 GROUP BY name
 ORDER BY COUNT(student) DESC
 ```
+
+49. Какой процент обучающихся учится в "10 A" классе? Выведите ответ в диапазоне от 0 до 100 с округлением до четырёх знаков после запятой, например, 96.0201.
+
+```
+WITH a_10 AS (
+	SELECT COUNT(class) AS count_10
+	FROM Student_in_class
+		JOIN Class ON Student_in_class.class = Class.id
+	WHERE name = '10 A'
+), all_10 AS (
+	SELECT COUNT(class) AS count_all
+	FROM Student_in_class
+)
+SELECT (count_10 / count_all) * 100 AS percent
+FROM a_10,
+	all_10
+```
+
+50. Какой процент обучающихся родился в 2000 году? Результат округлить до целого в меньшую сторону.
+
+```
+WITH a_2000 AS (
+	SELECT COUNT(*) AS count_10
+	FROM Student
+	WHERE YEAR(birthday) = 2000
+), all_10 AS (
+	SELECT COUNT(*) AS count_all
+	FROM Student
+)
+SELECT 
+    FLOOR(count_10 * 100.0 / count_all) AS percent
+FROM a_2000, all_10
+```

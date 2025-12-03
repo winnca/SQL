@@ -369,4 +369,144 @@ SELECT FLOOR(AVG(YEAR(CURRENT_DATE) - YEAR(birthday))) AS age
 FROM FamilyMembers
 ```
 
-33. 
+33. Найдите среднюю цену икры на основе данных, хранящихся в таблице Payments. В базе данных хранятся данные о покупках красной (red caviar) и черной икры (black caviar). В ответе должна быть одна строка со средней ценой всей купленной когда-либо икры.
+
+```
+SELECT AVG(unit_price) AS cost
+FROM Payments
+	JOIN Goods ON Payments.good = Goods.good_id
+WHERE good_name LIKE '%caviar'
+```
+
+34. Сколько всего 10-ых классов?
+
+<details>
+	<summary>ERD</summary>
+	<br>
+	<img width="641" height="407" alt="image" src="https://github.com/user-attachments/assets/eb50b76c-3074-4e01-858d-17a510c2b633" />
+</details>
+
+```
+SELECT COUNT(name) AS COUNT
+FROM Class
+WHERE name LIKE '10%'
+```
+
+35. Сколько различных кабинетов школы использовались 2 сентября 2019 года для проведения занятий?
+
+```
+SELECT COUNT(DISTINCT classroom) AS count
+FROM Schedule
+WHERE DATE(date) = '2019-09-02'
+```
+
+36. Выведите информацию об обучающихся, живущих на улице Пушкина (ul. Pushkina)?
+
+```
+SELECT *
+FROM Student
+WHERE address LIKE '%Pushkina%'
+```
+
+37. Сколько лет самому молодому обучающемуся ?
+
+```
+SELECT TIMESTAMPDIFF(YEAR, birthday, current_date) AS year 
+FROM Student
+ORDER BY birthday DESC 
+LIMIT 1
+```
+
+```
+SELECT MIN(TIMESTAMPDIFF(YEAR, birthday, CURRENT_DATE)) AS year 
+FROM Student
+```
+
+38. Сколько учениц с именем Анна (Anna) учится в школе?
+
+```
+SELECT COUNT(*) AS COUNT
+FROM Student
+WHERE first_name = 'Anna'
+```
+
+39. Сколько обучающихся в 10 B классе ?
+
+```
+SELECT COUNT(student) AS COUNT
+FROM Student_in_class
+	JOIN Class ON Student_in_class.class = Class.id
+WHERE name = '10 B'
+```
+
+```
+SELECT COUNT(student) AS COUNT
+FROM Student_in_class
+WHERE class = (
+		SELECT id
+		FROM Class
+		WHERE name = '10 B'
+	)
+```
+
+40. Выведите название предметов, которые преподает Ромашкин П.П. (Romashkin P.P.). Обратите внимание, что в базе данных есть несколько учителей с такой фамилией.
+
+```
+SELECT name AS subjects
+FROM Subject
+	JOIN Schedule ON Subject.id = Schedule.subject
+	JOIN Teacher ON Schedule.teacher = Teacher.id
+WHERE first_name LIKE 'P%'
+	AND middle_name LIKE 'P%'
+	AND last_name LIKE 'Romashkin'
+```
+
+41. Выясните, во сколько по расписанию начинается четвёртое занятие.
+
+```
+SELECT DISTINCT start_pair
+FROM Timepair
+	JOIN Schedule ON Timepair.id = Schedule.number_pair
+WHERE number_pair = 4
+```
+
+42. Сколько времени обучающийся будет находиться в школе, учась со 2-го по 4-ый уч. предмет?
+
+```
+SELECT DISTINCT TIMEDIFF(
+		(
+			SELECT end_pair
+			FROM Timepair
+			WHERE id = 4
+		),
+		(
+			SELECT start_pair
+			FROM Timepair
+			WHERE id = 2
+		)
+	) AS time
+FROM Timepair
+```
+
+43. Выведите фамилии преподавателей, которые ведут физическую культуру (Physical Culture). Отсортируйте преподавателей по фамилии в алфавитном порядке.
+
+```
+SELECT last_name
+FROM Teacher
+	JOIN Schedule ON Teacher.id = Schedule.teacher
+	JOIN Subject ON Schedule.subject = Subject.id
+WHERE name LIKE 'Physical Culture'
+ORDER BY last_name ASC
+```
+
+44. Найдите максимальный возраст (количество лет) среди обучающихся 10 классов на сегодняшний день. Для получения текущих даты и времени используйте функцию NOW().
+
+```
+SELECT MAX(TIMESTAMPDIFF(YEAR, birthday, CURRENT_DATE)) AS max_year
+FROM Student
+	JOIN Student_in_class ON Student.id = Student_in_class.student
+	JOIN Class ON Student_in_class.class = Class.id
+WHERE name LIKE '10%'
+```
+
+45.

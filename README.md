@@ -601,3 +601,87 @@ SELECT
     FLOOR(count_10 * 100.0 / count_all) AS percent
 FROM a_2000, all_10
 ```
+
+51. Добавьте товар с именем "Cheese" и типом "food" в список товаров (Goods).
+
+```
+INSERT INTO Goods (good_id, good_name, type)
+VALUES(
+		(
+			SELECT MAX(good_id) + 1
+			FROM (SELECT * FROM Goods) AS temp
+		),
+		'Cheese',
+		(
+			SELECT good_type_id
+			FROM GoodTypes
+			WHERE good_type_name = 'food'
+		)
+	)
+```
+
+52. Добавьте в список типов товаров (GoodTypes) новый тип "auto".
+
+```
+INSERT INTO GoodTypes
+VALUES(
+		(
+			SELECT MAX(good_type_id) + 1
+			FROM (
+					SELECT *
+					FROM GoodTypes
+				) AS temp
+		),
+		'auto'
+	)
+```
+
+53. Измените имя "Andie Quincey" на новое "Andie Anthony".
+
+```
+UPDATE FamilyMembers
+SET member_name = 'Andie Anthony'
+WHERE member_name = 'Andie Quincey'
+```
+
+54. Удалить всех членов семьи с фамилией "Quincey".
+
+```
+DELETE FROM FamilyMembers
+WHERE member_name LIKE '%Quincey'
+```
+
+55. Удалить компании, совершившие наименьшее количество рейсов.
+
+```
+WITH trips AS (
+	SELECT company,
+		COUNT(*) AS count_
+	FROM Trip
+	GROUP BY company
+)
+DELETE FROM Company
+WHERE id IN (
+		SELECT company
+		FROM trips
+		WHERE count_ =(
+				SELECT MIN(count_)
+				FROM trips
+			)
+	)
+```
+
+56. Удалить все перелеты, совершенные из Москвы (Moscow).
+
+```
+DELETE FROM Trip
+WHERE town_from = 'Moscow'
+```
+
+57. Перенести расписание всех занятий на 30 мин. вперед.
+
+```
+UPDATE Timepair
+SET start_pair = TIMESTAMPADD(MINUTE, 30, start_pair),
+	end_pair = TIMESTAMPADD(MINUTE, 30, end_pair)
+```

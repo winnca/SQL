@@ -732,4 +732,35 @@ FROM Users
 WHERE phone_number LIKE '+375%'
 ```
 
-60. 
+60. Выведите идентификаторы преподавателей, которые хотя бы один раз за всё время преподавали в каждом из одиннадцатых классов.
+
+
+```
+SELECT teacher
+FROM Schedule
+	JOIN Class ON Schedule.class = Class.id
+WHERE name LIKE '11%'
+GROUP BY teacher
+HAVING COUNT(DISTINCT name) = 2
+```
+
+61. Выведите список комнат, которые были зарезервированы хотя бы на одни сутки в 12-ую неделю 2020 года. В данной задаче в качестве одной недели примите период из семи дней, первый из которых начинается 1 января 2020 года. Например, первая неделя года — 1–7 января, а третья — 15–21 января. Поля в результирующей таблице: Rooms.*.
+
+```
+SELECT Rooms.*
+FROM Rooms
+	JOIN Reservations ON Rooms.id = Reservations.room_id
+WHERE WEEK(start_date, 1) = 12
+	AND YEAR(start_date) = 2020
+```
+
+62. Вывести в порядке убывания популярности доменные имена 2-го уровня, используемые пользователями для электронной почты. Полученный результат необходимо дополнительно отсортировать по возрастанию названий доменных имён. Для эл. почты index@gmail.com доменным именем 2-го уровня будет gmail.com. Поля в результирующей таблице: domain, count.
+
+```
+SELECT SUBSTRING(email, LOCATE('@', email) + 1) AS domain,
+	COUNT(SUBSTRING(email, LOCATE('@', email) + 1)) AS count
+FROM Users
+GROUP BY domain
+Order BY count DESC,
+	domain ASC
+```

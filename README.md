@@ -693,6 +693,7 @@ SET start_pair = TIMESTAMPADD(MINUTE, 30, start_pair),
 	<br>
 	<img width="702" height="403" alt="image" src="https://github.com/user-attachments/assets/5bb2cc7b-1cbb-4a98-bad0-dccb05cdc8fd" />
 </details>
+
 ```
 INSERT INTO Reviews
 VALUES(

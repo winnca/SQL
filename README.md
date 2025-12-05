@@ -764,3 +764,33 @@ GROUP BY domain
 Order BY count DESC,
 	domain ASC
 ```
+
+63. Выведите отсортированный список (по возрастанию) фамилий и имен студентов в виде Фамилия.И. Поля в результирующей таблице: name.
+
+```
+SELECT CONCAT(
+		CONCAT(last_name, '.'),
+		CONCAT(SUBSTRING(first_name, 1, 1), '.')
+	) AS name
+FROM Student
+ORDER BY name ASC
+```
+
+64. Вывести количество бронирований по каждому месяцу каждого года, в которых было хотя бы 1 бронирование. Результат отсортируйте в порядке возрастания даты бронирования. Используйте конструкцию "as year", "as month" и "as amount" для вывода года и месяца бронирования, количества таких бронирований соответственно. Поля в результирующей таблице: year, month, amount.
+
+```
+SELECT YEAR(start_date) AS year,
+	MONTH(start_date) AS MONTH,
+	COUNT(*) AS amount
+FROM Reservations
+GROUP BY year,
+	MONTH
+ORDER BY year,
+	MONTH ASC
+```
+
+65. Необходимо вывести рейтинг для комнат, которые хоть раз арендовали, как среднее значение рейтинга отзывов округленное до целого вниз.
+
+```
+
+```

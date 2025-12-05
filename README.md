@@ -688,6 +688,11 @@ SET start_pair = TIMESTAMPADD(MINUTE, 30, start_pair),
 
 58. Добавить отзыв от George Clooney. Добавить отзыв с рейтингом 5 на жилье, находящиеся по адресу "11218, Friel Place, New York", от имени "George Clooney". В качестве первичного ключа (id) укажите количество записей в таблице + 1. Резервация комнаты, на которую вам нужно оставить отзыв, уже была сделана, нужно лишь ее найти.
 
+<details>
+	<summary>ERD</summary>
+	<br>
+	<img width="702" height="403" alt="image" src="https://github.com/user-attachments/assets/5bb2cc7b-1cbb-4a98-bad0-dccb05cdc8fd" />
+</details>
 ```
 INSERT INTO Reviews
 VALUES(

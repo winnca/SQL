@@ -685,3 +685,45 @@ UPDATE Timepair
 SET start_pair = TIMESTAMPADD(MINUTE, 30, start_pair),
 	end_pair = TIMESTAMPADD(MINUTE, 30, end_pair)
 ```
+
+58. Добавить отзыв от George Clooney. Добавить отзыв с рейтингом 5 на жилье, находящиеся по адресу "11218, Friel Place, New York", от имени "George Clooney". В качестве первичного ключа (id) укажите количество записей в таблице + 1. Резервация комнаты, на которую вам нужно оставить отзыв, уже была сделана, нужно лишь ее найти.
+
+```
+INSERT INTO Reviews
+VALUES(
+		(
+			SELECT MAX(id) + 1
+			FROM (
+					SELECT *
+					FROM Reviews
+				) AS temp
+		),
+		(
+			SELECT id
+			FROM (
+					SELECT *
+					FROM Reservations
+					WHERE user_id = (
+							SELECT id
+							FROM Users
+							WHERE name = 'George Clooney'
+						)
+						AND room_id = (
+							SELECT id
+							FROM Rooms
+							WHERE address LIKE '11218, Friel Place, New York'
+						)
+				) AS temps
+		), 5
+	)
+```
+
+59. Вывести пользователей,указавших Белорусский номер телефона ? Телефонный код Белоруссии +375.
+
+```
+SELECT *
+FROM Users
+WHERE phone_number LIKE '+375%'
+```
+
+60. 

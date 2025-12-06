@@ -931,4 +931,106 @@ FROM Rooms
 GROUP BY category
 ```
 
-71. 
+71. Найдите какой процент пользователей, зарегистрированных на сервисе бронирования, хоть раз арендовали или сдавали в аренду жилье. Результат округлите до сотых. Используйте конструкцию "as percent" для вывода процента активных пользователей. Пример формата ответа: 65.23 Поля в результирующей таблице: percent.
+
+```
+SELECT ROUND(
+		(
+			SELECT COUNT(*)
+			FROM (
+					SELECT owner_id
+					FROM Rooms
+						JOIN Reservations ON Rooms.id = Reservations.room_id
+					UNION
+					SELECT user_id
+					FROM Reservations
+				) users
+		) * 100 / (
+			SELECT COUNT(*)
+			FROM Users
+		),
+		2
+	) AS percent
+```
+
+72. Выведите среднюю цену бронирования за сутки для каждой из комнат, которую бронировали хотя бы один раз. Среднюю цену необходимо округлить до целого значения вверх. Используйте конструкцию "as avg_price" для вывода средней стоимости бронирования для комнат. Поля в результирующей таблице: room_id, avg_price.
+
+```
+SELECT room_id,
+	CEILING(AVG(price)) AS avg_price
+FROM Reservations
+GROUP BY room_id
+```
+
+73. Выведите id тех комнат, которые арендовали нечетное количество раз. Используйте конструкцию "as count" для вывода количество сколько раз комнату брали в аренду. Поля в результирующей таблице: room_id, count.
+
+```
+SELECT room_id,
+	COUNT(*) AS COUNT
+FROM Reservations
+GROUP BY room_id
+HAVING COUNT % 2 != 0
+```
+
+74. Выведите идентификатор и признак наличия интернета в помещении. Если интернет в сдаваемом жилье присутствует, то выведите «YES», иначе «NO». Используйте конструкцию "AS has_internet" для вывода признака наличия интернета в помещении. Поля в результирующей таблице: id, has_internet.
+
+<details>
+	<summary>table</summary>
+	<br>
+	<img width="338" height="115" alt="image" src="https://github.com/user-attachments/assets/964fbb07-333d-43d4-9e1b-15d3c320d471" />
+</details>
+
+```
+SELECT id,
+	(
+		CASE
+			WHEN has_internet = 1 THEN 'YES'
+			ELSE 'NO'
+		END
+	) AS has_internet
+FROM Rooms
+```
+
+```
+SELECT id,
+		CASE
+			WHEN has_internet = 1 THEN 'YES'
+			ELSE 'NO'
+		END AS has_internet
+FROM Rooms
+```
+
+75. Выведите фамилию, имя и дату рождения студентов, кто был рожден в мае. Поля в результирующей таблице: last_name, first_name, birthday.
+
+```
+SELECT last_name,
+	first_name,
+	birthday
+FROM Student
+WHERE MONTH(birthday) = 5
+```
+
+76. Вывести имена всех пользователей сервиса бронирования жилья, а также два признака: является ли пользователь собственником какого-либо жилья (is_owner) и является ли пользователь арендатором (is_tenant). В случае наличия у пользователя признака необходимо вывести в соответствующее поле 1, иначе 0. Используйте конструкцию "AS is_owner" для отображения признака собственника жилья. Используйте конструкцию "AS is_tenant" для отображения признака арендатора. Поля в результирующей таблице: name, is_owner, is_tenant.
+
+```
+SELECT name,
+	CASE
+		WHEN EXISTS (
+			SELECT 1
+			FROM Rooms
+			WHERE owner_id=Users.id
+		) THEN 1
+		ELSE 0
+	END AS is_owner,
+	CASE
+		WHEN EXISTS (
+			SELECT 1
+			FROM Reservations
+			WHERE user_id=Users.id
+		) THEN 1
+		ELSE 0
+	END AS is_tenant
+FROM Users
+```
+
+77. 

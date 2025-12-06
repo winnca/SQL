@@ -1033,4 +1033,52 @@ SELECT name,
 FROM Users
 ```
 
-77. 
+77. Создайте представление с именем "People", которое будет содержать список имен (first_name) и фамилий (last_name) всех студентов (Student) и преподавателей(Teacher).
+
+```
+CREATE VIEW People AS
+SELECT first_name,
+	last_name
+	FROM Student
+UNION ALL
+SELECT first_name,
+	last_name 
+FROM Teacher;
+SELECT *
+FROM People;
+```
+
+78. Выведите всех пользователей с электронной почтой в «hotmail.com».
+
+```
+SELECT *
+FROM Users
+WHERE email LIKE '%@hotmail.com'
+```
+
+79. Выведите поля id, home_type, price у всего жилья из таблицы Rooms. Если комната имеет телевизор и интернет одновременно, то в качестве цены в поле price выведите цену, применив скидку 10%. Поля в результирующей таблице: id, home_type, price.
+
+```
+SELECT id,
+	home_type,
+	(
+		CASE
+			WHEN has_tv = 1
+			AND has_internet = 1 THEN price * 0.9
+			ELSE price
+		END
+	) AS price
+FROM Rooms
+```
+
+80. Создайте представление «Verified_Users» с полями id, name и email, которое будет показывает только тех пользователей, у которых подтвержден адрес электронной почты.
+
+```
+CREATE VIEW Verified_Users AS
+SELECT id,
+	name,
+	email
+FROM Users
+WHERE email_verified_at IS NOT NULL;
+SELECT * FROM Verified_Users
+```

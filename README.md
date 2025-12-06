@@ -884,4 +884,51 @@ FROM Trip
 
 > %y	Год в 2 разряда ГГ
 
-68. 
+68. Для каждой комнаты, которую снимали как минимум 1 раз, найдите имя человека, снимавшего ее последний раз, и дату, когда он выехал. Используйте конструкцию "as room_id" для вывода идентификатора комнаты. Поля в результирующей таблице: room_id, name, end_date.
+
+```
+SELECT room_id,
+	name,
+	end_date
+FROM Users
+	JOIN Reservations ON Users.id = Reservations.user_id
+WHERE (room_id, end_date) IN (
+		SELECT room_id,
+			MAX(end_date)
+		FROM Reservations
+		GROUP BY room_id
+	)
+```
+
+69. Вывести идентификаторы всех владельцев комнат, что размещены на сервисе бронирования жилья и сумму, которую они заработали. Используйте конструкцию "as owner_id" и "as total_earn" для вывода идентификаторов владельцев и заработанной суммы соответственно. Поля в результирующей таблице: owner_id, total_earn.
+
+```
+SELECT owner_id,
+	COALESCE(SUM(total), 0) AS total_earn
+FROM Rooms
+	LEFT JOIN Reservations ON Rooms.id = Reservations.room_id
+GROUP BY owner_id
+```
+
+70. Необходимо категоризовать жилье на economy, comfort, premium по цене соответственно <= 100, 100 < цена < 200, >= 200. В качестве результата вывести таблицу с названием категории и количеством жилья, попадающего в данную категорию. Используйте конструкцию "as category" и "as count" для вывода названия категории и количества такого жилья соответственно. Поля в результирующей таблице: category, count.
+
+<details>
+	<summary>table</summary>
+	<br>
+	<img width="389" height="191" alt="image" src="https://github.com/user-attachments/assets/8ad1593b-6d0b-40b4-a4c1-68c9581aa1f7" />
+</details>
+
+```
+SELECT (
+		CASE
+			WHEN Rooms.price <= 100 THEN 'economy'
+			WHEN Rooms.price BETWEEN 101 AND 199 THEN 'comfort'
+			ELSE 'premium'
+		END
+) AS category,
+COUNT(*) AS count
+FROM Rooms
+GROUP BY category
+```
+
+71. 
